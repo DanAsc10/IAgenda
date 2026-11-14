@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7257E8">
+  <meta name="description" content="Sua agenda inteligente para organizar a semana.">
+  <title>IAgenda</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">IA</div>
+      <span>IAgenda</span>
+    </div>
+    <div class="avatar">D</div>
+  </header>
+
+  <main class="container">
+
+    <section class="welcome">
+      <div>
+        <p class="muted" id="today-date"></p>
+        <h1>Olá! 👋</h1>
+        <p class="muted">Vamos organizar sua semana?</p>
+      </div>
+    </section>
+
+    <section class="summary">
+      <div>
+        <p class="summary-label">Suas atividades</p>
+        <h2 id="total-count">0</h2>
+        <p class="summary-small">Atividades cadastradas</p>
+      </div>
+      <div class="summary-icon">📋</div>
+    </section>
+
+    <section class="progress-section">
+      <div class="section-heading">
+        <h2>Seu progresso</h2>
+        <span id="progress-percent">0%</span>
+      </div>
+      <div class="progress-track">
+        <div id="progress-bar"></div>
+      </div>
+      <p class="muted small" id="progress-text">
+        Vamos começar!
+      </p>
+    </section>
+
+    <section class="week-section">
+      <div class="section-heading">
+        <h2>Minha semana</h2>
+        <span class="week-label" id="week-label"></span>
+      </div>
+      <div class="week-days" id="week-days"></div>
+    </section>
+
+    <section class="tasks-section">
+      <div class="section-heading">
+        <div>
+          <h2 id="selected-day-title">Atividades</h2>
+          <p class="muted small">O que você precisa fazer?</p>
+        </div>
+        <button class="add-button" id="open-form">+ Adicionar</button>
+      </div>
+
+      <div id="task-list"></div>
+    </section>
+
+    <section class="assistant-card">
+      <div class="assistant-icon">✦</div>
+      <div>
+        <h3>Assistente inteligente</h3>
+        <p>Em breve, a IA ajudará você a organizar sua rotina.</p>
+        <span class="coming-soon">EM DESENVOLVIMENTO</span>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="nav-item active">
+      <span>⌂</span>
+      <small>Início</small>
+    </div>
+    <div class="nav-item">
+      <span>▦</span>
+      <small>Agenda</small>
+    </div>
+    <div class="nav-item">
+      <span>✦</span>
+      <small>Assistente</small>
+    </div>
+  </nav>
+
+  <div class="modal" id="task-modal">
+    <form class="modal-content" id="task-form">
+      <div class="modal-heading">
+        <h2>Nova atividade</h2>
+        <button type="button" id="close-form" class="close-button">✕</button>
+      </div>
+
+      <label for="task-title">Nome da atividade</label>
+      <input
+        id="task-title"
+        type="text"
+        placeholder="Ex.: Estudar para química"
+        required
+        maxlength="80"
+      >
+
+      <label for="task-date">Data</label>
+      <input id="task-date" type="date" required>
+
+      <label for="task-category">Categoria</label>
+      <select id="task-category">
+        <option value="Estudo">Estudo</option>
+        <option value="Trabalho">Trabalho</option>
+        <option value="Prova">Prova</option>
+        <option value="Pessoal">Pessoal</option>
+        <option value="Outro">Outro</option>
+      </select>
+
+      <label for="task-priority">Prioridade</label>
+      <select id="task-priority">
+        <option value="Normal">Normal</option>
+        <option value="Alta">Alta</option>
+        <option value="Urgente">Urgente</option>
+      </select>
+
+      <button class="save-button" type="submit">
+        Salvar atividade
+      </button>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
