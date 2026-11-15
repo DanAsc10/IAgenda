@@ -52,6 +52,7 @@ jobs:
         run: |
           echo "$KEYSTORE_BASE64" | base64 --decode > android/app/iagenda-release.jks
 
+
       - name: Configurar assinatura e versão
         run: |
           python3 - <<'PY'
@@ -61,8 +62,19 @@ jobs:
           path = Path("android/app/build.gradle")
           content = path.read_text()
 
-          content, n1 = re.subn(r'versionCode\s+\d+', 'versionCode 2', content, count=1)
-          content, n2 = re.subn(r'versionName\s+"[^"]+"', 'versionName "2.0"', content, count=1)
+          content, v1 = re.subn(
+              r'(?m)^([ \t]*)versionCode[ \t]+\d+',
+              r'\g<1>versionCode 2',
+              content,
+              count=1
+          )
+
+          content, v2 = re.subn(
+              r'(?m)^([ \t]*)versionName[ \t]+"[^"]+"',
+              r'\g<1>versionName "2.0"',
+              content,
+              count=1
+          )
 
           signing = '''
           signingConfigs {
@@ -75,18 +87,25 @@ jobs:
           }
           '''
 
-          content, n3 = re.subn(r'(?m)^buildTypes\s*\{', signing + '\nbuildTypes {', content, count=1)
-          content, n4 = re.subn(
-              r'(?m)^(\s*)release\s*\{',
-              r'\1release {\n\1    signingConfig signingConfigs.release',
+          content, v3 = re.subn(
+              r'(?m)^([ \t]*)buildTypes[ \t]*\{',
+              lambda m: m.group(1) + signing + '\n' + m.group(0),
               content,
               count=1
           )
 
-          if not all((n1, n2, n3, n4)):
-              raise SystemExit("Não foi possível configurar o Gradle automaticamente.")
+          content, v4 = re.subn(
+              r'(buildTypes\s*\{\s*release\s*\{)',
+              r'\1\n            signingConfig signingConfigs.release',
+              content,
+              count=1
+          )
+
+          if not all((v1, v2, v3, v4)):
+              raise SystemExit("Falha ao localizar a estrutura do Gradle.")
 
           path.write_text(content)
+          print("Configuração de assinatura concluída.")
           PY
 
       - name: Compilar APK assinado
