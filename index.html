@@ -1,32 +1,26 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#7257E8">
-  <meta name="description" content="Sua agenda inteligente para organizar a semana.">
+  <meta name="description" content="Sua agenda inteligente para organizar a rotina.">
   <title>IAgenda</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-
   <header class="topbar">
-    <div class="brand">
-      <div class="brand-icon">IA</div>
-      <span>IAgenda</span>
-    </div>
+    <div class="brand"><div class="brand-icon">IA</div><span>IAgenda</span><span class="version-tag">2.0</span></div>
     <div class="avatar">D</div>
   </header>
 
   <main class="container">
-
     <section class="welcome">
       <div>
         <p class="muted" id="today-date"></p>
         <h1>Olá! 👋</h1>
-        <p class="muted">Vamos organizar sua semana?</p>
+        <p class="muted">Vamos organizar sua rotina?</p>
       </div>
     </section>
 
@@ -40,102 +34,76 @@
     </section>
 
     <section class="progress-section">
-      <div class="section-heading">
-        <h2>Seu progresso</h2>
-        <span id="progress-percent">0%</span>
-      </div>
-      <div class="progress-track">
-        <div id="progress-bar"></div>
-      </div>
-      <p class="muted small" id="progress-text">
-        Vamos começar!
-      </p>
+      <div class="section-heading"><h2>Seu progresso</h2><span id="progress-percent">0%</span></div>
+      <div class="progress-track"><div id="progress-bar"></div></div>
+      <p class="muted small" id="progress-text">Vamos começar!</p>
     </section>
 
-    <section class="week-section">
-      <div class="section-heading">
-        <h2>Minha semana</h2>
-        <span class="week-label" id="week-label"></span>
-      </div>
-      <div class="week-days" id="week-days"></div>
-    </section>
+    <div id="home-view">
+      <section class="week-section">
+        <div class="section-heading"><h2>Minha semana</h2><span class="week-label" id="week-label"></span></div>
+        <div class="week-days" id="week-days"></div>
+      </section>
 
-    <section class="tasks-section">
-      <div class="section-heading">
-        <div>
-          <h2 id="selected-day-title">Atividades</h2>
-          <p class="muted small">O que você precisa fazer?</p>
+      <section class="tasks-section">
+        <div class="section-heading">
+          <div><h2 id="selected-day-title">Atividades</h2><p class="muted small">O que você precisa fazer?</p></div>
+          <button class="add-button" id="open-form">+ Adicionar</button>
         </div>
-        <button class="add-button" id="open-form">+ Adicionar</button>
+        <div id="task-list"></div>
+      </section>
+
+      <section class="assistant-card">
+        <div class="assistant-icon">✦</div>
+        <div><h3>Assistente inteligente</h3><p>O assistente com IA chegará na versão 3.0.</p><span class="coming-soon">PLANEJADO PARA A VERSÃO 3.0</span></div>
+      </section>
+    </div>
+
+    <section id="calendar-view" class="calendar-view" hidden>
+      <div class="section-heading calendar-heading">
+        <div><h2>Calendário mensal</h2><p class="muted small">Selecione um dia para ver suas atividades.</p></div>
+        <button class="add-button" id="calendar-add">+ Adicionar</button>
       </div>
-
-      <div id="task-list"></div>
-    </section>
-
-    <section class="assistant-card">
-      <div class="assistant-icon">✦</div>
-      <div>
-        <h3>Assistente inteligente</h3>
-        <p>Em breve, a IA ajudará você a organizar sua rotina.</p>
-        <span class="coming-soon">EM DESENVOLVIMENTO</span>
+      <div class="month-controls">
+        <button type="button" class="month-arrow" id="prev-month" aria-label="Mês anterior">‹</button>
+        <h2 id="month-title"></h2>
+        <button type="button" class="month-arrow" id="next-month" aria-label="Próximo mês">›</button>
       </div>
+      <div class="calendar-grid calendar-weekdays" aria-hidden="true">
+        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span>
+      </div>
+      <div class="calendar-grid" id="calendar-days"></div>
+      <div class="calendar-legend"><span class="legend-dot"></span> Dia com atividade</div>
+      <section class="calendar-day-tasks">
+        <div class="section-heading"><div><h2 id="calendar-selected-title">Atividades do dia</h2><p class="muted small">Tarefas da data selecionada</p></div></div>
+        <div id="calendar-task-list"></div>
+      </section>
     </section>
-
   </main>
 
-  <nav class="bottom-nav">
-    <div class="nav-item active">
-      <span>⌂</span>
-      <small>Início</small>
-    </div>
-    <div class="nav-item">
-      <span>▦</span>
-      <small>Agenda</small>
-    </div>
-    <div class="nav-item">
-      <span>✦</span>
-      <small>Assistente</small>
-    </div>
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <button class="nav-item active" data-view="home"><span>⌂</span><small>Início</small></button>
+    <button class="nav-item" data-view="calendar"><span>▦</span><small>Agenda</small></button>
+    <button class="nav-item" data-view="assistant"><span>✦</span><small>Assistente</small></button>
   </nav>
 
   <div class="modal" id="task-modal">
     <form class="modal-content" id="task-form">
-      <div class="modal-heading">
-        <h2>Nova atividade</h2>
-        <button type="button" id="close-form" class="close-button">✕</button>
-      </div>
-
+      <div class="modal-heading"><h2>Nova atividade</h2><button type="button" id="close-form" class="close-button" aria-label="Fechar">✕</button></div>
       <label for="task-title">Nome da atividade</label>
-      <input
-        id="task-title"
-        type="text"
-        placeholder="Ex.: Estudar para química"
-        required
-        maxlength="80"
-      >
-
+      <input id="task-title" type="text" placeholder="Ex.: Estudar para química" required maxlength="80">
       <label for="task-date">Data</label>
       <input id="task-date" type="date" required>
-
+      <div class="time-fields">
+        <div><label for="task-start">Horário de início <span>(opcional)</span></label><input id="task-start" type="time"></div>
+        <div><label for="task-end">Horário de término <span>(opcional)</span></label><input id="task-end" type="time"></div>
+      </div>
+      <p class="field-hint">Você pode preencher os dois horários, apenas um ou deixar ambos vazios.</p>
       <label for="task-category">Categoria</label>
-      <select id="task-category">
-        <option value="Estudo">Estudo</option>
-        <option value="Trabalho">Trabalho</option>
-        <option value="Prova">Prova</option>
-        <option value="Pessoal">Pessoal</option>
-        <option value="Outro">Outro</option>
-      </select>
-
+      <select id="task-category"><option value="Estudo">Estudo</option><option value="Trabalho">Trabalho</option><option value="Prova">Prova</option><option value="Pessoal">Pessoal</option><option value="Outro">Outro</option></select>
       <label for="task-priority">Prioridade</label>
-      <select id="task-priority">
-        <option value="Normal">Normal</option>
-        <option value="Alta">Alta</option>
-        <option value="Urgente">Urgente</option>
-      </select>
-
-      <button class="save-button" type="submit">
-        Salvar atividade
-      </button>
+      <select id="task-priority"><option value="Normal">Normal</option><option value="Alta">Alta</option><option value="Urgente">Urgente</option></select>
+      <button class="save-button" type="submit">Salvar atividade</button>
     </form>
   </div>
 
