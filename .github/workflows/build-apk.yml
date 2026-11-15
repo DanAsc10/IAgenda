@@ -46,15 +46,62 @@ jobs:
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      - name: Compilar APK
+      - name: Restaurar chave de assinatura
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          cd android
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/iagenda-release.jks
+
+      - name: Configurar assinatura e versão
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("android/app/build.gradle")
+          content = path.read_text()
+
+          content, n1 = re.subn(r'versionCode\s+\d+', 'versionCode 2', content, count=1)
+          content, n2 = re.subn(r'versionName\s+"[^"]+"', 'versionName "2.0"', content, count=1)
+
+          signing = '''
+          signingConfigs {
+              release {
+                  storeFile file("iagenda-release.jks")
+                  storePassword System.getenv("KEYSTORE_PASSWORD")
+                  keyAlias System.getenv("KEY_ALIAS")
+                  keyPassword System.getenv("KEY_PASSWORD")
+              }
+          }
+          '''
+
+          content, n3 = re.subn(r'(?m)^buildTypes\s*\{', signing + '\nbuildTypes {', content, count=1)
+          content, n4 = re.subn(
+              r'(?m)^(\s*)release\s*\{',
+              r'\1release {\n\1    signingConfig signingConfigs.release',
+              content,
+              count=1
+          )
+
+          if not all((n1, n2, n3, n4)):
+              raise SystemExit("Não foi possível configurar o Gradle automaticamente.")
+
+          path.write_text(content)
+          PY
+
+      - name: Compilar APK assinado
+        working-directory: android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease
 
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
-          name: IAgenda-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: IAgenda-APK-2.0
+          path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
